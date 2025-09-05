@@ -21,7 +21,7 @@ app.use('/user',authRoute);
 
 app.get("/test", async(req, res)=>{
   res.send({
-    message: "LATEST UPDATE: test was successful!"
+    message: "LATEST TEST UPDATE: test was successful!"
   })
 })
 
