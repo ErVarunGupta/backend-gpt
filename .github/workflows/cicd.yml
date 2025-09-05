@@ -10,7 +10,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -18,11 +18,21 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+    - name: Backup .env
+      run: |
+        if [ -f .env ]; then mv .env /tmp/env_backup; fi
     - uses: actions/checkout@v4
+
+    - name: Restore .env
+      run: |
+        if [ -f ./tmp/env_backup ]; then mv /tmp/env_backup .env; fi
+        
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: rm -rf node_modules package-lock.json
     - run: npm ci
     - run: npm run build --if-present
+    - run: sudo pm2 restart backend
